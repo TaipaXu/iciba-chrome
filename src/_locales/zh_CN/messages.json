@@ -1,0 +1,16 @@
+{
+    "appDescription": {"message": "金山词霸浏览器扩展"},
+    "cancel": {"message": "取消"},
+    "clear": {"message": "清空"},
+    "confirm": {"message": "确认"},
+    "confirm2ClearHistory": {"message": "是否删历史记录？"},
+    "drawWords": {"message": "划词翻译"},
+    "export": {"message": "导出"},
+    "history": {"message": "历史"},
+    "recordHistory": {"message": "记录历史"},
+    "search": {"message": "查询"},
+    "settings": {"message": "设置"},
+    "tips": {"message": "提示"},
+    "translate": {"message": "翻译"},
+    "translateInputPlaceholder": {"message": "单词或句子"}
+}
