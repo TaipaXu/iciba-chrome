@@ -1,17 +1,17 @@
 # iciba-chrome
 
-A Chrome extension for iCIBA.
+iCIBA Chrome 扩展。
 
-English | [中文](./README_ZH.md)
+[English](./README.md) | 中文
 
 ![](./app.png)
 
-## Installation
+## 安装
 [Chrome](https://chrome.google.com/webstore/detail/iciba/eknklfmpancpjepiepnopoedekiifklh)
 
 [Edge](https://microsoftedge.microsoft.com/addons/detail/iciba/oigpeonhjfeabejhmingbagjpadnjmhc)
 
-## Development & Building
+## 开发与打包
 
 ```sh
 $ git clone https://github.com/TaipaXu/iciba-chrome.git
@@ -20,6 +20,6 @@ $ npm i
 $ npm run build
 ```
 
-## License
+## 协议
 
 [GPL-3.0](LICENSE)

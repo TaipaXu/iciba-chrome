@@ -1,4 +1,7 @@
-node_modules/
-dist/
-npm-debug.log
-yarn-error.log
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+src/@types/auto-imports.d.ts
+src/@types/components.d.ts

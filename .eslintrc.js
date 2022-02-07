@@ -1,59 +1,89 @@
 module.exports = {
+    root: true,
     env: {
         browser: true,
-        webextensions: true,
-        es6: true
+        es2021: true,
+        node: true,
     },
-    extends: [
-        'airbnb-base',
-        'plugin:vue/recommended'
-    ],
-    globals: {
-        Atomics: 'readonly',
-        SharedArrayBuffer: 'readonly'
-    },
+    parser: 'vue-eslint-parser',
     parserOptions: {
-        parser: 'babel-eslint',
+        ecmaVersion: 12,
+        parser: '@typescript-eslint/parser',
+        sourceType: 'module',
     },
-    plugins: [
-        'vue'
-    ],
+    extends: ['plugin:vue/vue3-recommended',],
+    plugins: ['vue', '@typescript-eslint',],
     rules: {
-        'max-len': 'off',
+        'indent': ["error", 4,],
+        'semi': ['error', 'always',],
+        '@type-eslint/ban-ts-ignore': 'off',
+        '@type-eslint/explicit-function-return-type': 'off',
+        '@type-eslint/no-explicit-any': 'off',
+        '@type-eslint/no-var-requires': 'off',
+        '@type-eslint/no-empty-function': 'off',
+        '@type-eslint/no-use-before-define': 'off',
+        '@type-eslint/ban-ts-comment': 'off',
+        '@type-eslint/ban-types': 'off',
+        '@type-eslint/no-non-null-assertion': 'off',
+        '@type-eslint/explicit-module-boundary-types': 'off',
+        'vue/custom-event-name-casing': 'off',
+        'vue/attributes-order': 'off',
+        'vue/one-component-per-file': 'off',
+        'vue/html-closing-bracket-newline': 'off',
+        'vue/max-attributes-per-line': 'off',
+        'vue/multiline-html-element-content-newline': 'off',
+        'vue/singleline-html-element-content-newline': 'off',
+        'vue/attribute-hyphenation': 'off',
+        'vue/html-self-closing': 'off',
+        'vue/no-multiple-template-root': 'off',
+        'vue/require-default-prop': 'off',
+        'vue/no-v-model-argument': 'off',
+        'vue/no-arrow-functions-in-watch': 'off',
+        'vue/no-template-key': 'off',
+        'vue/no-v-html': 'off',
+        'vue/comment-directive': 'off',
+        'vue/no-parsing-error': 'off',
+        'vue/no-deprecated-v-on-native-modifier': 'off',
+        'vue/html-indent': ['error', 4, {
+            'attribute': 0,
+            'baseIndent': 0,
+        },],
+        "vue/html-closing-bracket-newline": "off",
+        "vue/script-indent": ["error", 4, { "baseIndent": 0, },],
+        "vue/html-self-closing": "off",
+        "vue/singleline-html-element-content-newline": "off",
+        "vue/max-attributes-per-line": "off",
+        'no-useless-escape': 'off',
+        'no-sparse-arrays': 'off',
+        'no-prototype-builtins': 'off',
+        'no-constant-condition': 'off',
+        'no-use-before-define': 'off',
+        'no-restricted-globals': 'off',
+        'no-restricted-syntax': 'off',
+        'generator-star-spacing': 'off',
+        'no-unreachable': 'off',
+        'no-multiple-template-root': 'off',
+        'no-unused-vars': 'off',
+        'no-v-model-argument': 'off',
+        'no-case-declarations': 'off',
         'no-console': 'off',
-        'no-extend-native': 'off',
-        'no-plusplus': 'off',
-        'no-unused-vars': ['error', {
-            'args': 'none'
-        }],
-        'class-methods-use-this': 'off',
-        'no-nested-ternary': 'off',
-        indent: ['error', 4],
-        'no-restricted-syntax': 0,
-        'no-empty': ['error', {
-            'allowEmptyCatch': true,
-        }],
-        'import/prefer-default-export': 0,
+        "vue/multi-word-component-names": 'off',
+        "vue/no-unused-vars": "off",
+        "comma-dangle": ["error", {
+            "arrays": "always",
+            "objects": "always",
+            "imports": "never",
+            "exports": "never",
+            "functions": "never",
+        },
+        ],
     },
     overrides: [
         {
-            files: ['*.vue'],
-            rules: {
-                indent: 'off',
-                'vue/html-indent': ['error', 4, {
-                    'ignores': ['VAttribute']
-                }],
-                'vue/html-closing-bracket-newline': 'off',
-                'vue/script-indent': ['error', 4, { 'baseIndent': 1 }],
-                'vue/html-self-closing': 'off',
-                'vue/singleline-html-element-content-newline': 'off',
-                'vue/max-attributes-per-line': 'off'
-            }
-        }
-    ],
-    settings: {
-        'import/resolver': {
-            webpack: { 'config': './webpack.config.js' }
+            "files": ["*.vue",],
+            "rules": {
+                "indent": "off",
+            },
         },
-    },
+    ],
 };
