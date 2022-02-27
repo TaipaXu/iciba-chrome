@@ -36,6 +36,7 @@
     "@types/chrome": "^0.0.177",
     "@types/node": "^17.0.13",
     "@types/nprogress": "^0.2.0",
+    "@types/webextension-polyfill": "^0.8.2",
     "@typescript-eslint/eslint-plugin": "^5.10.1",
     "@typescript-eslint/parser": "^5.10.1",
     "@vitejs/plugin-vue": "^2.0.0",
