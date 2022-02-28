@@ -22,6 +22,13 @@
             </template>
         </el-input>
     </el-card>
+    <div class="records">
+        <a
+        v-for="(record, index) in records"
+        :key="index"
+        class="record"
+        @click.prevent="recordClicked(record.word)">{{ record.word }}</a>
+    </div>
     <div
     class="result">
         <template v-if="result instanceof MWord">
@@ -89,6 +96,11 @@ import { translate as RTranslate } from '@/apis/dictionary';
 import play from '@/utils/audio';
 import MWord from '@/models/word';
 import MSentence from '@/models/sentence';
+import {
+    addRecord as DAddRecord,
+    getRecords as DGetRecords
+} from '@/data';
+import Record from '@/models/record';
 
 NProgress.configure({
     showSpinner: false,
@@ -103,6 +115,10 @@ const search = async () => {
         NProgress.start();
         try {
             result.value = await RTranslate(input.value);
+            if (result.value instanceof MWord) {
+                await DAddRecord(input.value, 'word');
+                getRecords();
+            }
         } catch (error) {
 
         }
@@ -112,6 +128,22 @@ const search = async () => {
 
 const prounce = (url: string) => {
     play(url);
+};
+
+const records: Ref<Record[]> = ref([]);
+
+const MAX_Records_COUNT = 6;
+
+const getRecords = async () => {
+    const data: Record[] = await DGetRecords();
+    records.value = data.splice(0, MAX_Records_COUNT);
+};
+
+getRecords();
+
+const recordClicked = (word: string) => {
+    input.value = word;
+    search();
 };
 </script>
 
@@ -145,6 +177,32 @@ const prounce = (url: string) => {
         flex-direction: column;
         justify-content: center;
         cursor: pointer;
+    }
+}
+
+.record {
+    &s {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+
+        margin-top: 5px;
+    }
+
+    $color: skyblue !default;
+
+    padding: 2px;
+    color: $color;
+    cursor: pointer;
+
+    &:not(:last-of-type) {
+        margin-right: 3px;
+    }
+
+    &:hover {
+        color: darken($color: $color, $amount: 10);
+        background-color: #d3d3d3;
     }
 }
 

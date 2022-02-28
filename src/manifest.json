@@ -17,6 +17,9 @@
         "default_title": "iCIBA",
         "default_popup": "popup.html"
     },
+    "permissions": [
+        "storage"
+    ],
     "host_permissions": [
         "http://dict-pc.iciba.com/"
     ],
