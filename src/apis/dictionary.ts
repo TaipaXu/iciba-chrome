@@ -2,14 +2,13 @@ import request from '@/network';
 import MWord, { Part as MPart, AmPronunciation as MAmPronunciation, EnPronunciation as MEnPronunciation } from '@/models/word';
 import MSentence from '@/models/sentence';
 
-export async function translate(content: string): Promise<MWord | MSentence | undefined>  {
+export async function translate(content: string): Promise<MWord | MSentence | undefined> {
     const data: any = await request({
         url: 'http://dict-pc.iciba.com/interface/index.php',
-        method: 'GET',
-        params: {
-            client: 5,
-            type: 1,
-            timestamp: 1557025419,
+        params: new URLSearchParams({
+            client: '5',
+            type: '1',
+            timestamp: '1557025419',
             uuid: 'CB5082D19C82440F836DE3AED8E5FEB5',
             c: 'word',
             m: 'index',
@@ -17,7 +16,7 @@ export async function translate(content: string): Promise<MWord | MSentence | un
             sign: 'cf2decaa9965af29',
             list: '1',
             word: content,
-        },
+        }),
     });
     console.log('data', data);
     const message = data.message;

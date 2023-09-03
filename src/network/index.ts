@@ -1,17 +1,6 @@
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
-
-const request: AxiosInstance = axios.create({
-    timeout: 5000,
-});
-
-request.interceptors.response.use(
-    (response: AxiosResponse) => {
-        const data = response.data;
-        return data;
-    },
-    (error) => {
-
-    }
-);
+const request = async ({ url, params, }: { url: string, params: URLSearchParams }) => {
+    const data = await fetch(`${url}?${params.toString()}`);
+    return await data.json();
+};
 
 export default request;
