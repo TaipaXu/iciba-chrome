@@ -17,8 +17,13 @@
         "default_title": "iCIBA",
         "default_popup": "popup.html"
     },
+    "background": {
+        "type": "module",
+        "service_worker": "service.js"
+    },
     "permissions": [
-        "storage"
+        "storage",
+        "contextMenus"
     ],
     "host_permissions": [
         "http://dict-pc.iciba.com/"

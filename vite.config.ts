@@ -53,7 +53,10 @@ export default defineConfig({
     ],
     build: {
         rollupOptions: {
-            input: ["popup.html",],
+            input: [
+                "popup.html",
+                './src/service.ts',
+            ],
             output: {
                 chunkFileNames: "[name].[hash].js",
                 assetFileNames: "[name].[hash].[ext]",
