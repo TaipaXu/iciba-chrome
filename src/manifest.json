@@ -22,8 +22,10 @@
         "service_worker": "service.js"
     },
     "permissions": [
+        "activeTab",
+        "contextMenus",
         "storage",
-        "contextMenus"
+        "scripting"
     ],
     "host_permissions": [
         "http://dict-pc.iciba.com/"
