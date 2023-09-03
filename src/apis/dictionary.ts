@@ -18,7 +18,6 @@ export async function translate(content: string): Promise<MWord | MSentence | un
             word: content,
         }),
     });
-    console.log('data', data);
     const message = data.message;
     const baseInfo = message.baesInfo;
     if (baseInfo.translate_type === 1) {

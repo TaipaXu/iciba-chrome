@@ -56,7 +56,6 @@ export default defineConfig({
             input: [
                 "popup.html",
                 './src/service.ts',
-                "./src/inject.ts",
             ],
             output: {
                 chunkFileNames: "[name].[hash].js",
