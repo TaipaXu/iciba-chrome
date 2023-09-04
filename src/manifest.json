@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "iciba",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "description": "金山词霸浏览器扩展",
     "icons": {
         "16": "./assets/icons/icon_16.png",
