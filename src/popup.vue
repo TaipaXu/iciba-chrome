@@ -172,6 +172,10 @@ const recordClicked = (word: string) => {
     margin-top: 10px;
     padding: 0 10px 10px;
 
+    .el-input__wrapper {
+        box-shadow: none;
+    }
+
     .el-input__suffix-inner {
         display: flex;
         flex-direction: column;
