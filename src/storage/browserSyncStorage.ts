@@ -14,7 +14,7 @@ class BrowserSyncStorage extends AbstractStorage {
         return data[key];
     }
 
-    set(data: object) {
+    set(data: Record<string, unknown>) {
         browser.storage.sync.set(data);
     }
 }

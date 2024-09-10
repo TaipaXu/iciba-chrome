@@ -14,7 +14,7 @@ class BrowserLocalStorage extends AbstractStorage {
         return data[key];
     }
 
-    set(data: object) {
+    set(data: Record<string, unknown>) {
         return browser.storage.local.set(data);
     }
 }

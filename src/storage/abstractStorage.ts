@@ -3,7 +3,7 @@ abstract class AbstractStorage {
 
     }
 
-    set(data: object) {
+    set(data: Record<string, unknown>) {
 
     }
 }

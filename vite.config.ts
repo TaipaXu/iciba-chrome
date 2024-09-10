@@ -1,8 +1,8 @@
 import { defineConfig } from "vite";
 import { resolve } from "path";
 import vue from '@vitejs/plugin-vue';
+import vuetify from 'vite-plugin-vuetify';
 import AutoImport from 'unplugin-auto-import/vite';
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
 import Components from 'unplugin-vue-components/vite';
 import copy from "rollup-plugin-copy";
 import del from 'rollup-plugin-delete';
@@ -31,12 +31,12 @@ export default defineConfig({
     },
     plugins: [
         vue(),
+        vuetify(),
         AutoImport({
             imports: ['vue',],
             dts: resolve(resolve('src/@types'), 'auto-imports.d.ts'),
         }),
         Components({
-            resolvers: [ElementPlusResolver(),],
             dts: resolve(resolve('src/@types'), 'components.d.ts'),
         }),
         copy({

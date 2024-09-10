@@ -24,10 +24,12 @@ const injectPopup = async () => {
     popup.style.left = `${rect.left + window.scrollX}px`;
     document.body.append(popup);
 
+    //@ts-ignore
     const injected = globalThis.injected;
     if (injected) {
         return;
     }
+    //@ts-ignore
     globalThis.injected = true;
 
     const style = document.createElement('style');

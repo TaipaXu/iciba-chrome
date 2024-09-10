@@ -16,8 +16,8 @@ iCIBA Chrome 扩展。
 ```sh
 $ git clone https://github.com/TaipaXu/iciba-chrome.git
 $ cd iciba-chrome
-$ npm i
-$ npm run build
+$ pnpm i
+$ pnpm run build
 ```
 
 ## 协议
