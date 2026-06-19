@@ -146,10 +146,10 @@ const prounce = (url: string) => {
 };
 
 const records: Ref<Record[]> = ref([]);
-const MAX_Records_COUNT = 6;
+const MAX_VISIBLE_RECORDS_COUNT = 6;
 const getRecords = async () => {
     const data: Record[] = await DGetRecords();
-    records.value = data.splice(0, MAX_Records_COUNT);
+    records.value = data.slice(0, MAX_VISIBLE_RECORDS_COUNT);
 };
 void getRecords();
 
