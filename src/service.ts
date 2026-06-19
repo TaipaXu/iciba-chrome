@@ -8,6 +8,15 @@ type PopupMessage = {
     result: MWord | string | undefined;
 };
 
+type PopupColorScheme = 'light' | 'dark';
+
+type CssColor = {
+    red: number;
+    green: number;
+    blue: number;
+    alpha: number;
+};
+
 type InjectionGlobal = typeof globalThis & {
     icibaPopupState?: {
         initialized: boolean;
@@ -46,51 +55,181 @@ const injectPopup = (): number | undefined => {
         top: rect.top + window.scrollY,
     };
 
-    if (document.querySelector('#iciba-popup-style') === null) {
-        const style = document.createElement('style');
-        style.id = 'iciba-popup-style';
-        style.textContent = `
+    const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
+
+    const parseColorChannel = (channel: string): number | undefined => {
+        const value = Number.parseFloat(channel);
+        if (!Number.isFinite(value)) {
+            return;
+        }
+
+        return clamp(channel.endsWith('%') ? value * 2.55 : value, 0, 255);
+    };
+
+    const parseAlphaChannel = (channel: string | undefined): number => {
+        if (channel === undefined) {
+            return 1;
+        }
+
+        const value = Number.parseFloat(channel);
+        if (!Number.isFinite(value)) {
+            return 1;
+        }
+
+        return clamp(channel.endsWith('%') ? value / 100 : value, 0, 1);
+    };
+
+    const parseCssColor = (value: string): CssColor | undefined => {
+        const channels = value.match(/[\d.]+%?/g);
+        if (channels === null || channels.length < 3) {
+            return;
+        }
+
+        const redChannel = channels[0];
+        const greenChannel = channels[1];
+        const blueChannel = channels[2];
+        if (redChannel === undefined || greenChannel === undefined || blueChannel === undefined) {
+            return;
+        }
+
+        const red = parseColorChannel(redChannel);
+        const green = parseColorChannel(greenChannel);
+        const blue = parseColorChannel(blueChannel);
+        if (red === undefined || green === undefined || blue === undefined) {
+            return;
+        }
+
+        return {
+            red,
+            green,
+            blue,
+            alpha: parseAlphaChannel(channels[3]),
+        };
+    };
+
+    const getRelativeLuminance = ({ red, green, blue }: CssColor): number => {
+        const normalize = (channel: number) => {
+            const value = channel / 255;
+            return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+        };
+
+        return 0.2126 * normalize(red) + 0.7152 * normalize(green) + 0.0722 * normalize(blue);
+    };
+
+    const getOpaqueBackgroundColor = (element: Element | null): CssColor | undefined => {
+        let currentElement = element;
+        while (currentElement !== null) {
+            const backgroundColor = parseCssColor(
+                window.getComputedStyle(currentElement).backgroundColor,
+            );
+            if (backgroundColor !== undefined && backgroundColor.alpha >= 0.8) {
+                return backgroundColor;
+            }
+            currentElement = currentElement.parentElement;
+        }
+    };
+
+    const getPageColorScheme = (): PopupColorScheme => {
+        const pointX = clamp(rect.left + rect.width / 2, 0, Math.max(window.innerWidth - 1, 0));
+        const pointY = clamp(rect.top + rect.height / 2, 0, Math.max(window.innerHeight - 1, 0));
+        const backgroundColor = getOpaqueBackgroundColor(document.elementFromPoint(pointX, pointY));
+        if (backgroundColor !== undefined) {
+            return getRelativeLuminance(backgroundColor) < 0.45 ? 'dark' : 'light';
+        }
+
+        return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    };
+
+    const popupStyle = `
             .iciba-popup {
-                position: absolute;
-                width: 300px;
-                padding: 10px;
-                background-color: #fff;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-                border-radius: 5px;
-                z-index: 9999;
+                all: initial;
+                --iciba-popup-background: #fff;
+                --iciba-popup-border: rgba(60, 64, 67, 0.16);
+                --iciba-popup-foreground: #202124;
+                --iciba-popup-label: #b3261e;
+                --iciba-popup-muted: #5f6368;
+                --iciba-popup-shadow: 0 6px 18px rgba(60, 64, 67, 0.35);
+                position: absolute !important;
+                display: block !important;
+                width: 300px !important;
+                padding: 10px !important;
+                color: var(--iciba-popup-foreground) !important;
+                color-scheme: light !important;
+                background-color: var(--iciba-popup-background) !important;
+                border: 1px solid var(--iciba-popup-border) !important;
+                border-radius: 5px !important;
+                box-shadow: var(--iciba-popup-shadow) !important;
+                box-sizing: border-box !important;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+                font-size: 14px !important;
+                font-style: normal !important;
+                font-weight: 400 !important;
+                line-height: 1.5 !important;
+                text-align: left !important;
+                white-space: normal !important;
+                z-index: 2147483647 !important;
             }
 
-            .prounciations {
-                display: flex;
-                flex-direction: row;
-                user-select: none;
+            .iciba-popup.iciba-popup--dark {
+                --iciba-popup-background: #1f1f1f;
+                --iciba-popup-border: rgba(232, 234, 237, 0.18);
+                --iciba-popup-foreground: #f1f3f4;
+                --iciba-popup-label: #f28b82;
+                --iciba-popup-muted: #bdc1c6;
+                --iciba-popup-shadow: 0 8px 22px rgba(0, 0, 0, 0.55);
+                color-scheme: dark !important;
             }
 
-            .prounciation {
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                font-size: 11px;
+            .iciba-popup * {
+                box-sizing: border-box !important;
+                color: inherit !important;
+                font-family: inherit !important;
+                font-style: inherit !important;
+                font-weight: inherit !important;
+                line-height: inherit !important;
             }
 
-            .prounciation + .prounciation {
-                margin-left: 8px;
+            .iciba-popup .prounciations {
+                display: flex !important;
+                flex-direction: row !important;
+                color: var(--iciba-popup-muted) !important;
+                user-select: none !important;
             }
 
-            .parts {
-                margin-top: 4px;
+            .iciba-popup .prounciation {
+                display: flex !important;
+                flex-direction: row !important;
+                align-items: center !important;
+                font-size: 11px !important;
             }
 
-            .part {
-                font-size: 14px;
+            .iciba-popup .prounciation + .prounciation {
+                margin-left: 8px !important;
             }
 
-            .part__part {
-                display: inline-block;
-                min-width: 26px;
-                user-select: none;
+            .iciba-popup .parts {
+                margin-top: 4px !important;
+            }
+
+            .iciba-popup .part {
+                font-size: 14px !important;
+            }
+
+            .iciba-popup .part__part {
+                display: inline-block !important;
+                min-width: 26px !important;
+                color: var(--iciba-popup-label) !important;
+                user-select: none !important;
             }
         `;
+    const style =
+        document.querySelector<HTMLStyleElement>('#iciba-popup-style') ??
+        document.createElement('style');
+    style.id = 'iciba-popup-style';
+    if (style.textContent !== popupStyle) {
+        style.textContent = popupStyle;
+    }
+    if (style.parentElement === null) {
         (document.head ?? document.documentElement).append(style);
     }
 
@@ -100,7 +239,7 @@ const injectPopup = (): number | undefined => {
         stalePopup.remove();
     }
 
-    popup.className = 'iciba-popup';
+    popup.className = `iciba-popup iciba-popup--${getPageColorScheme()}`;
     popup.textContent = 'Translating...';
     if (popup.parentElement === null) {
         (document.body ?? document.documentElement).append(popup);
