@@ -4,15 +4,15 @@
     "version": "0.5.0",
     "description": "金山词霸浏览器扩展",
     "icons": {
-        "16": "./assets/icons/icon_16.png",
-        "48": "./assets/icons/icon_48.png",
-        "128": "./assets/icons/icon_128.png"
+        "16": "assets/icons/icon_16.png",
+        "48": "assets/icons/icon_48.png",
+        "128": "assets/icons/icon_128.png"
     },
     "action": {
         "default_icon": {
-            "16": "./assets/icons/icon_16.png",
-            "24": "./assets/icons/icon_24.png",
-            "32": "./assets/icons/icon_32.png"
+            "16": "assets/icons/icon_16.png",
+            "24": "assets/icons/icon_24.png",
+            "32": "assets/icons/icon_32.png"
         },
         "default_title": "iCIBA",
         "default_popup": "popup.html"
@@ -22,6 +22,6 @@
         "service_worker": "service.js"
     },
     "permissions": ["activeTab", "contextMenus", "storage", "scripting"],
-    "host_permissions": ["http://dict-pc.iciba.com/"],
+    "host_permissions": ["http://dict-pc.iciba.com/*"],
     "homepage_url": "https://github.com/TaipaXu/iciba-chrome"
 }

@@ -36,12 +36,14 @@ type TranslateResponse = {
     };
 };
 
+const DICTIONARY_API_URL = 'http://dict-pc.iciba.com/interface/index.php';
+
 export async function translate(
     content: string,
     signal?: AbortSignal,
 ): Promise<MWord | MSentence | undefined> {
     const data = await request<TranslateResponse>({
-        url: 'http://dict-pc.iciba.com/interface/index.php',
+        url: DICTIONARY_API_URL,
         params: new URLSearchParams({
             client: '5',
             type: '1',
