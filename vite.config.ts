@@ -130,6 +130,7 @@ export default defineConfig({
     build: {
         rollupOptions: {
             input: {
+                history: fileURLToPath(new URL('./history.html', import.meta.url)),
                 popup: fileURLToPath(new URL('./popup.html', import.meta.url)),
                 service: fileURLToPath(new URL('./src/service.ts', import.meta.url)),
             },

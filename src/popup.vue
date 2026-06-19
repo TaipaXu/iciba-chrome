@@ -8,6 +8,10 @@
 
         <v-spacer />
 
+        <v-btn icon title="生词本 / 全部历史" @click="openHistory">
+            <v-icon>$bookOpenVariant</v-icon>
+        </v-btn>
+
         <v-btn icon @click="openPage('https://github.com/TaipaXu/iciba-chrome')">
             <v-icon>$github</v-icon>
         </v-btn>
@@ -25,15 +29,6 @@
         @click:append-inner="search"
         @keyup.enter="search"></v-text-field>
 
-        <div class="records">
-            <v-btn
-            v-for="(record, index) in records"
-            :key="index"
-            variant="text"
-            size="x-small"
-            class="record"
-            @click="recordClicked(record.word)">{{ record.word }}</v-btn>
-        </div>
         <div
         class="result">
             <template v-if="result instanceof MWord">
@@ -84,12 +79,14 @@ import MWord from '@/models/word';
 import type MSentence from '@/models/sentence';
 import {
     addRecord as DAddRecord,
-    getRecords as DGetRecords,
 } from '@/data';
-import type Record from '@/models/record';
 
 const openPage = (url: string) => {
     globalThis.open(url);
+};
+
+const openHistory = () => {
+    globalThis.open(chrome.runtime.getURL('history.html'));
 };
 
 const loading = ref(false);
@@ -126,7 +123,6 @@ const search = async () => {
         result.value = data ?? '未找到结果';
         if (data instanceof MWord) {
             await DAddRecord(query, 'word');
-            await getRecords();
         }
     } catch (error) {
         if (requestId !== searchRequestId || (error instanceof DOMException && error.name === 'AbortError')) {
@@ -143,19 +139,6 @@ const search = async () => {
 
 const prounce = (url: string) => {
     play(url);
-};
-
-const records: Ref<Record[]> = ref([]);
-const MAX_VISIBLE_RECORDS_COUNT = 6;
-const getRecords = async () => {
-    const data: Record[] = await DGetRecords();
-    records.value = data.slice(0, MAX_VISIBLE_RECORDS_COUNT);
-};
-void getRecords();
-
-const recordClicked = (word: string) => {
-    input.value = word;
-    void search();
 };
 </script>
 
@@ -179,21 +162,6 @@ const recordClicked = (word: string) => {
 .main {
     margin-top: 10px;
     padding: 0 10px 10px;
-}
-
-.record {
-    &s {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        flex-wrap: wrap;
-
-        margin-top: 8px;
-    }
-
-    &:not(:last-of-type) {
-        margin-right: 3px;
-    }
 }
 
 .result {

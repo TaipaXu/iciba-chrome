@@ -1,1 +1,1 @@
-export { addRecord, getRecords } from './record';
+export { addRecord, deleteRecord, getRecords, updateRecordFavorite } from './record';

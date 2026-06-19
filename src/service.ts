@@ -1,6 +1,7 @@
 import browser from 'webextension-polyfill';
 import { translate as RTranslate } from '@/apis/dictionary';
-import type MWord from '@/models/word';
+import { addRecord as DAddRecord } from '@/data';
+import MWord from '@/models/word';
 
 type PopupMessage = {
     requestId: number;
@@ -216,6 +217,9 @@ browser.contextMenus.onClicked.addListener(
                     return;
                 }
                 const result: string | MWord | undefined = await RTranslate(selectedText);
+                if (result instanceof MWord) {
+                    await DAddRecord(selectedText.trim(), 'word');
+                }
                 await browser.tabs.sendMessage(tabId, {
                     requestId,
                     result,
