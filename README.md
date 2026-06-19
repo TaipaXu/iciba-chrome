@@ -7,6 +7,7 @@ English | [中文](./README_ZH.md)
 ![](./app.png)
 
 ## Installation
+
 [Chrome](https://chrome.google.com/webstore/detail/iciba/eknklfmpancpjepiepnopoedekiifklh)
 
 [Edge](https://microsoftedge.microsoft.com/addons/detail/iciba/oigpeonhjfeabejhmingbagjpadnjmhc)

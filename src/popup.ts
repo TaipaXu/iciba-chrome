@@ -1,13 +1,10 @@
+import { createApp } from 'vue';
 import App from './popup.vue';
 import { createVuetify } from 'vuetify';
 import 'vuetify/styles';
 import colors from 'vuetify/lib/util/colors.mjs';
 import { aliases, mdi } from 'vuetify/iconsets/mdi-svg';
-import {
-    mdiMagnify,
-    mdiHeadphones,
-    mdiGithub
-} from '@mdi/js';
+import { mdiGithub, mdiHeadphones, mdiMagnify } from '@mdi/js';
 import { getSystemTheme } from '@/utils/theme';
 
 const vuetify = createVuetify({
@@ -17,16 +14,16 @@ const vuetify = createVuetify({
             light: {
                 colors: {
                     primary: colors.red.darken2,
-                    secondary: colors.red.lighten4
-                }
+                    secondary: colors.red.lighten4,
+                },
             },
             dark: {
                 colors: {
                     primary: colors.red.darken4,
-                    secondary: colors.red.lighten4
-                }
-            }
-        }
+                    secondary: colors.red.lighten4,
+                },
+            },
+        },
     },
     icons: {
         defaultSet: 'mdi',
@@ -34,12 +31,12 @@ const vuetify = createVuetify({
             ...aliases,
             magnify: mdiMagnify,
             headphones: mdiHeadphones,
-            github: mdiGithub
+            github: mdiGithub,
         },
         sets: {
-            mdi
-        }
-    }
+            mdi,
+        },
+    },
 });
 
 const app = createApp(App);

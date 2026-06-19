@@ -1,4 +1,1 @@
-export {
-    addRecord,
-    getRecords
-} from './record';
+export { addRecord, getRecords } from './record';

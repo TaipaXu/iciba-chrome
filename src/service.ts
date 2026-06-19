@@ -2,11 +2,15 @@ import browser from 'webextension-polyfill';
 import { translate as RTranslate } from '@/apis/dictionary';
 import MWord from '@/models/word';
 
+type InjectionGlobal = typeof globalThis & {
+    injected?: boolean;
+};
+
 browser.runtime.onInstalled.addListener(() => {
     browser.contextMenus.create({
         id: 'icibaContextMenu',
         title: 'translate',
-        contexts: ['selection',],
+        contexts: ['selection'],
     });
 });
 
@@ -24,13 +28,11 @@ const injectPopup = async () => {
     popup.style.left = `${rect.left + window.scrollX}px`;
     document.body.append(popup);
 
-    //@ts-ignore
-    const injected = globalThis.injected;
-    if (injected) {
+    const injectionGlobal = globalThis as InjectionGlobal;
+    if (injectionGlobal.injected === true) {
         return;
     }
-    //@ts-ignore
-    globalThis.injected = true;
+    injectionGlobal.injected = true;
 
     const style = document.createElement('style');
     style.textContent = `
@@ -86,6 +88,10 @@ const injectPopup = async () => {
 
     chrome.runtime.onMessage.addListener((message: string | MWord | undefined) => {
         const popup = document.querySelector<HTMLElement>('.iciba-popup');
+        if (popup === null) {
+            return;
+        }
+
         if (typeof message === 'object') {
             const partsElement = document.createElement('div');
             const prounciationsElement = document.createElement('div');
@@ -122,30 +128,29 @@ const injectPopup = async () => {
                 partsElement.append(partElement);
             }
 
-            popup!.append(partsElement);
+            popup.append(partsElement);
         } else if (typeof message === 'string') {
-            popup!.textContent = message;
+            popup.textContent = message;
         }
-        popup!.style.top = `${rect.top - popup!.clientHeight - 10 + window.scrollY}px`;
+        popup.style.top = `${rect.top - popup.clientHeight - 10 + window.scrollY}px`;
     });
 };
 
-browser.contextMenus.onClicked.addListener(async (info: browser.Menus.OnClickData, tab: browser.Tabs.Tab | undefined) => {
-    if (info.menuItemId === 'icibaContextMenu') {
-        const selectedText: string | undefined = info.selectionText;
-        const tabId: number | undefined = tab?.id;
-        if (selectedText && tabId) {
-            await browser.scripting.executeScript({
-                target: {
-                    tabId,
-                },
-                func: injectPopup,
-            });
-            const result: string | MWord | undefined = await RTranslate(selectedText);
-            browser.tabs.sendMessage(
-                tabId,
-                result
-            );
+browser.contextMenus.onClicked.addListener(
+    async (info: browser.Menus.OnClickData, tab: browser.Tabs.Tab | undefined) => {
+        if (info.menuItemId === 'icibaContextMenu') {
+            const selectedText: string | undefined = info.selectionText;
+            const tabId: number | undefined = tab?.id;
+            if (selectedText && tabId) {
+                await browser.scripting.executeScript({
+                    target: {
+                        tabId,
+                    },
+                    func: injectPopup,
+                });
+                const result: string | MWord | undefined = await RTranslate(selectedText);
+                await browser.tabs.sendMessage(tabId, result);
+            }
         }
-    }
-});
+    },
+);

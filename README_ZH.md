@@ -7,6 +7,7 @@ iCIBA Chrome 扩展。
 ![](./app.png)
 
 ## 安装
+
 [Chrome](https://chrome.google.com/webstore/detail/iciba/eknklfmpancpjepiepnopoedekiifklh)
 
 [Edge](https://microsoftedge.microsoft.com/addons/detail/iciba/oigpeonhjfeabejhmingbagjpadnjmhc)

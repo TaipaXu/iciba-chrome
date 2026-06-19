@@ -2,19 +2,18 @@ import browser from 'webextension-polyfill';
 import AbstractStorage from './abstractStorage';
 
 class BrowserLocalStorage extends AbstractStorage {
-    async get(key: string, defaultValue: any = null) {
+    async get<T>(key: string, defaultValue: T): Promise<T> {
         const data = await browser.storage.local.get(key);
+        const value = data[key];
 
-        if (Object.entries(data).length === 0) {
+        if (Object.entries(data).length === 0 || value == null) {
             return defaultValue;
         }
-        if (data[key] == null) {
-            return defaultValue;
-        }
-        return data[key];
+
+        return value as T;
     }
 
-    set(data: Record<string, unknown>) {
+    set(data: Record<string, unknown>): Promise<void> {
         return browser.storage.local.set(data);
     }
 }

@@ -21,14 +21,7 @@
         "type": "module",
         "service_worker": "service.js"
     },
-    "permissions": [
-        "activeTab",
-        "contextMenus",
-        "storage",
-        "scripting"
-    ],
-    "host_permissions": [
-        "http://dict-pc.iciba.com/"
-    ],
+    "permissions": ["activeTab", "contextMenus", "storage", "scripting"],
+    "host_permissions": ["http://dict-pc.iciba.com/"],
     "homepage_url": "https://github.com/TaipaXu/iciba-chrome"
 }

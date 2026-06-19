@@ -1,9 +1,14 @@
 import dayjs from 'dayjs';
 import * as storage from '@/storage';
-import Record, { Type as RecordType } from '@/models/record';
+import type Record from '@/models/record';
+import type { Type as RecordType } from '@/models/record';
 
-export async function getRecords() : Promise<Record[]> {
-    const data = await storage.local.get('records', {});
+type RecordsStorage = {
+    items?: Record[];
+};
+
+export async function getRecords(): Promise<Record[]> {
+    const data = await storage.local.get<RecordsStorage>('records', {});
 
     return data.items || [];
 }
@@ -19,6 +24,6 @@ export async function setRecords(items: Record[]) {
 
 export async function addRecord(word: string, type: RecordType) {
     const items: Record[] = await getRecords();
-    items.unshift({ word, type, datetime: dayjs().format('YYYY-MM-DD HH:mm:ss'), });
+    items.unshift({ word, type, datetime: dayjs().format('YYYY-MM-DD HH:mm:ss') });
     await setRecords(items);
 }

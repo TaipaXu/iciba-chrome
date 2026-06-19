@@ -1,11 +1,7 @@
 abstract class AbstractStorage {
-    get(key: string) {
+    abstract get<T>(key: string, defaultValue: T): Promise<T>;
 
-    }
-
-    set(data: Record<string, unknown>) {
-
-    }
+    abstract set(data: Record<string, unknown>): Promise<void>;
 }
 
 export default AbstractStorage;

@@ -1,3 +1,3 @@
 type Sentence = string;
 
-export default Sentence;
+export type { Sentence as default };

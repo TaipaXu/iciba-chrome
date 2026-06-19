@@ -1,11 +1,11 @@
 export interface Part {
-    part?: string,
-    means: string[],
+    part?: string;
+    means: string[];
 }
 
 interface Pronunciation {
-    str: string,
-    pronunciation?: string,
+    str: string;
+    pronunciation?: string;
 }
 
 export type AmPronunciation = Pronunciation;

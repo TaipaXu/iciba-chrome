@@ -1,6 +1,12 @@
-const request = async ({ url, params, }: { url: string, params: URLSearchParams }) => {
+const request = async <T>({
+    url,
+    params,
+}: {
+    url: string;
+    params: URLSearchParams;
+}): Promise<T> => {
     const data = await fetch(`${url}?${params.toString()}`);
-    return await data.json();
+    return data.json() as Promise<T>;
 };
 
 export default request;

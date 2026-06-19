@@ -76,20 +76,21 @@
 </template>
 
 <script setup lang="ts">
+import { ref, type Ref } from 'vue';
 import { getSystemTheme } from '@/utils/theme';
 import { translate as RTranslate } from '@/apis/dictionary';
 import play from '@/utils/audio';
 import MWord from '@/models/word';
-import MSentence from '@/models/sentence';
+import type MSentence from '@/models/sentence';
 import {
     addRecord as DAddRecord,
-    getRecords as DGetRecords
+    getRecords as DGetRecords,
 } from '@/data';
-import Record from '@/models/record';
+import type Record from '@/models/record';
 
 const openPage = (url: string) => {
     globalThis.open(url);
-}
+};
 
 const loading = ref(false);
 const input = ref('');
@@ -101,10 +102,10 @@ const search = async () => {
             result.value = await RTranslate(input.value);
             if (result.value instanceof MWord) {
                 await DAddRecord(input.value, 'word');
-                getRecords();
+                await getRecords();
             }
-        } catch (error) {
-
+        } catch {
+            result.value = undefined;
         }
         loading.value = false;
     }
@@ -120,11 +121,11 @@ const getRecords = async () => {
     const data: Record[] = await DGetRecords();
     records.value = data.splice(0, MAX_Records_COUNT);
 };
-getRecords();
+void getRecords();
 
 const recordClicked = (word: string) => {
     input.value = word;
-    search();
+    void search();
 };
 </script>
 
