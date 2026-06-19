@@ -95,19 +95,49 @@ const openPage = (url: string) => {
 const loading = ref(false);
 const input = ref('');
 const result: Ref<MSentence | MWord | undefined> = ref();
+let searchRequestId = 0;
+let activeQuery = '';
+let searchController: AbortController | undefined;
 const search = async () => {
-    if (input.value.length > 0) {
-        loading.value = true;
-        try {
-            result.value = await RTranslate(input.value);
-            if (result.value instanceof MWord) {
-                await DAddRecord(input.value, 'word');
-                await getRecords();
-            }
-        } catch {
-            result.value = undefined;
+    const query = input.value.trim();
+    if (query.length === 0) {
+        input.value = query;
+        result.value = '请输入要查询的内容';
+        return;
+    }
+
+    if (loading.value && query === activeQuery) {
+        return;
+    }
+
+    searchController?.abort();
+    searchController = new AbortController();
+    const requestId = ++searchRequestId;
+    activeQuery = query;
+    input.value = query;
+    loading.value = true;
+
+    try {
+        const data = await RTranslate(query, searchController.signal);
+        if (requestId !== searchRequestId) {
+            return;
         }
-        loading.value = false;
+
+        result.value = data ?? '未找到结果';
+        if (data instanceof MWord) {
+            await DAddRecord(query, 'word');
+            await getRecords();
+        }
+    } catch (error) {
+        if (requestId !== searchRequestId || (error instanceof DOMException && error.name === 'AbortError')) {
+            return;
+        }
+        result.value = '网络错误，请稍后重试';
+    } finally {
+        if (requestId === searchRequestId) {
+            loading.value = false;
+            searchController = undefined;
+        }
     }
 };
 

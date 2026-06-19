@@ -36,7 +36,10 @@ type TranslateResponse = {
     };
 };
 
-export async function translate(content: string): Promise<MWord | MSentence | undefined> {
+export async function translate(
+    content: string,
+    signal?: AbortSignal,
+): Promise<MWord | MSentence | undefined> {
     const data = await request<TranslateResponse>({
         url: 'http://dict-pc.iciba.com/interface/index.php',
         params: new URLSearchParams({
@@ -51,6 +54,7 @@ export async function translate(content: string): Promise<MWord | MSentence | un
             list: '1',
             word: content,
         }),
+        signal,
     });
     const baseInfo = data.message?.baesInfo;
     if (baseInfo === undefined) {
