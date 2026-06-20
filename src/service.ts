@@ -24,7 +24,10 @@ type InjectionGlobal = typeof globalThis & {
         anchor?: {
             left: number;
             top: number;
+            bottom: number;
+            width: number;
         };
+        query?: string;
     };
 };
 
@@ -50,9 +53,12 @@ const injectPopup = (): number | undefined => {
         requestId: 0,
     });
     state.requestId += 1;
+    state.query = selection.toString().trim();
     state.anchor = {
         left: rect.left + window.scrollX,
         top: rect.top + window.scrollY,
+        bottom: rect.bottom + window.scrollY,
+        width: rect.width,
     };
 
     const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
@@ -144,40 +150,87 @@ const injectPopup = (): number | undefined => {
             .iciba-popup {
                 all: initial;
                 --iciba-popup-background: #fff;
-                --iciba-popup-border: rgba(60, 64, 67, 0.16);
+                --iciba-popup-background-raised: #fff8f8;
+                --iciba-popup-border: rgba(60, 64, 67, 0.14);
+                --iciba-popup-divider: rgba(60, 64, 67, 0.1);
                 --iciba-popup-foreground: #202124;
                 --iciba-popup-label: #b3261e;
                 --iciba-popup-muted: #5f6368;
-                --iciba-popup-shadow: 0 6px 18px rgba(60, 64, 67, 0.35);
+                --iciba-popup-chip: #fce8e6;
+                --iciba-popup-shadow: 0 18px 40px rgba(60, 64, 67, 0.22), 0 2px 8px rgba(60, 64, 67, 0.16);
+                --iciba-popup-caret-left: 28px;
                 position: absolute !important;
                 display: block !important;
-                width: 300px !important;
-                padding: 10px !important;
+                width: max-content !important;
+                min-width: min(240px, calc(100vw - 24px)) !important;
+                max-width: min(360px, calc(100vw - 24px)) !important;
+                padding: 12px 14px !important;
+                overflow: visible !important;
                 color: var(--iciba-popup-foreground) !important;
                 color-scheme: light !important;
                 background-color: var(--iciba-popup-background) !important;
                 border: 1px solid var(--iciba-popup-border) !important;
-                border-radius: 5px !important;
+                border-radius: 8px !important;
                 box-shadow: var(--iciba-popup-shadow) !important;
                 box-sizing: border-box !important;
                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
                 font-size: 14px !important;
                 font-style: normal !important;
                 font-weight: 400 !important;
-                line-height: 1.5 !important;
+                line-height: 1.55 !important;
+                opacity: 1 !important;
+                scrollbar-width: thin !important;
                 text-align: left !important;
+                text-shadow: none !important;
                 white-space: normal !important;
+                overflow-wrap: anywhere !important;
                 z-index: 2147483647 !important;
+                animation: iciba-popup-enter 120ms ease-out !important;
             }
 
             .iciba-popup.iciba-popup--dark {
-                --iciba-popup-background: #1f1f1f;
-                --iciba-popup-border: rgba(232, 234, 237, 0.18);
+                --iciba-popup-background: #202124;
+                --iciba-popup-background-raised: #2a2020;
+                --iciba-popup-border: rgba(232, 234, 237, 0.16);
+                --iciba-popup-divider: rgba(232, 234, 237, 0.12);
                 --iciba-popup-foreground: #f1f3f4;
                 --iciba-popup-label: #f28b82;
                 --iciba-popup-muted: #bdc1c6;
-                --iciba-popup-shadow: 0 8px 22px rgba(0, 0, 0, 0.55);
+                --iciba-popup-chip: rgba(242, 139, 130, 0.14);
+                --iciba-popup-shadow: 0 18px 42px rgba(0, 0, 0, 0.5), 0 2px 10px rgba(0, 0, 0, 0.34);
                 color-scheme: dark !important;
+            }
+
+            .iciba-popup.iciba-popup--above {
+                transform-origin: var(--iciba-popup-caret-left) 100% !important;
+            }
+
+            .iciba-popup.iciba-popup--below {
+                transform-origin: var(--iciba-popup-caret-left) 0 !important;
+            }
+
+            .iciba-popup::after {
+                content: "" !important;
+                position: absolute !important;
+                left: calc(var(--iciba-popup-caret-left) - 5px) !important;
+                width: 10px !important;
+                height: 10px !important;
+                background: var(--iciba-popup-background) !important;
+                border: 1px solid var(--iciba-popup-border) !important;
+                box-sizing: border-box !important;
+                transform: rotate(45deg) !important;
+            }
+
+            .iciba-popup.iciba-popup--above::after {
+                bottom: -6px !important;
+                border-left: 0 !important;
+                border-top: 0 !important;
+            }
+
+            .iciba-popup.iciba-popup--below::after {
+                top: -6px !important;
+                border-right: 0 !important;
+                border-bottom: 0 !important;
             }
 
             .iciba-popup * {
@@ -189,37 +242,158 @@ const injectPopup = (): number | undefined => {
                 line-height: inherit !important;
             }
 
+            .iciba-popup__header {
+                display: flex !important;
+                align-items: center !important;
+                gap: 8px !important;
+                min-width: 0 !important;
+                margin-bottom: 10px !important;
+                padding-bottom: 8px !important;
+                border-bottom: 1px solid var(--iciba-popup-divider) !important;
+            }
+
+            .iciba-popup__brand {
+                flex: 0 0 auto !important;
+                padding: 1px 5px !important;
+                color: var(--iciba-popup-label) !important;
+                background: var(--iciba-popup-chip) !important;
+                border-radius: 4px !important;
+                font-size: 11px !important;
+                font-weight: 700 !important;
+                line-height: 1.45 !important;
+                letter-spacing: 0 !important;
+                user-select: none !important;
+            }
+
+            .iciba-popup__query {
+                min-width: 0 !important;
+                overflow: hidden !important;
+                color: var(--iciba-popup-foreground) !important;
+                font-size: 13px !important;
+                font-weight: 600 !important;
+                line-height: 1.35 !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
+            }
+
+            .iciba-popup__body {
+                display: grid !important;
+                gap: 10px !important;
+                max-height: min(260px, calc(100vh - 92px)) !important;
+                overflow-y: auto !important;
+                scrollbar-width: thin !important;
+            }
+
+            .iciba-popup__status {
+                display: flex !important;
+                align-items: center !important;
+                gap: 10px !important;
+                min-height: 28px !important;
+                color: var(--iciba-popup-muted) !important;
+                font-size: 13px !important;
+            }
+
+            .iciba-popup__status--empty {
+                justify-content: center !important;
+            }
+
+            .iciba-popup__spinner {
+                flex: 0 0 auto !important;
+                width: 16px !important;
+                height: 16px !important;
+                border: 2px solid var(--iciba-popup-divider) !important;
+                border-top-color: var(--iciba-popup-label) !important;
+                border-radius: 50% !important;
+                animation: iciba-popup-spin 680ms linear infinite !important;
+            }
+
+            .iciba-popup__plain {
+                max-height: min(260px, calc(100vh - 92px)) !important;
+                overflow-y: auto !important;
+                color: var(--iciba-popup-foreground) !important;
+                font-size: 14px !important;
+                line-height: 1.65 !important;
+                scrollbar-width: thin !important;
+            }
+
             .iciba-popup .prounciations {
                 display: flex !important;
-                flex-direction: row !important;
+                flex-flow: row wrap !important;
+                gap: 6px !important;
                 color: var(--iciba-popup-muted) !important;
                 user-select: none !important;
             }
 
             .iciba-popup .prounciation {
-                display: flex !important;
-                flex-direction: row !important;
+                display: inline-flex !important;
                 align-items: center !important;
-                font-size: 11px !important;
+                padding: 2px 7px !important;
+                color: var(--iciba-popup-muted) !important;
+                background: var(--iciba-popup-background-raised) !important;
+                border: 1px solid var(--iciba-popup-divider) !important;
+                border-radius: 999px !important;
+                font-size: 12px !important;
+                line-height: 1.35 !important;
             }
 
             .iciba-popup .prounciation + .prounciation {
-                margin-left: 8px !important;
+                margin-left: 0 !important;
             }
 
             .iciba-popup .parts {
-                margin-top: 4px !important;
+                display: grid !important;
+                gap: 8px !important;
+                margin-top: 0 !important;
             }
 
             .iciba-popup .part {
+                display: grid !important;
+                grid-template-columns: minmax(34px, max-content) 1fr !important;
+                align-items: start !important;
+                column-gap: 8px !important;
                 font-size: 14px !important;
+            }
+
+            .iciba-popup .part--plain {
+                display: block !important;
             }
 
             .iciba-popup .part__part {
                 display: inline-block !important;
-                min-width: 26px !important;
+                min-width: 34px !important;
+                padding: 1px 6px !important;
                 color: var(--iciba-popup-label) !important;
+                background: var(--iciba-popup-chip) !important;
+                border-radius: 4px !important;
+                font-size: 12px !important;
+                font-weight: 700 !important;
+                line-height: 1.45 !important;
+                text-align: center !important;
                 user-select: none !important;
+            }
+
+            .iciba-popup .part__means {
+                min-width: 0 !important;
+                color: var(--iciba-popup-foreground) !important;
+                line-height: 1.55 !important;
+                overflow-wrap: anywhere !important;
+            }
+
+            @keyframes iciba-popup-enter {
+                from {
+                    opacity: 0;
+                    transform: translateY(3px) scale(0.98);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+
+            @keyframes iciba-popup-spin {
+                to {
+                    transform: rotate(360deg);
+                }
             }
         `;
     const style =
@@ -239,8 +413,53 @@ const injectPopup = (): number | undefined => {
         stalePopup.remove();
     }
 
+    const createHeader = () => {
+        const headerElement = document.createElement('div');
+        headerElement.className = 'iciba-popup__header';
+
+        const brandElement = document.createElement('span');
+        brandElement.className = 'iciba-popup__brand';
+        brandElement.textContent = 'iCIBA';
+        headerElement.append(brandElement);
+
+        if (state.query !== undefined && state.query.length > 0) {
+            const queryElement = document.createElement('span');
+            queryElement.className = 'iciba-popup__query';
+            queryElement.textContent = state.query;
+            headerElement.append(queryElement);
+        }
+
+        return headerElement;
+    };
+
+    const renderStatus = (currentPopup: HTMLElement, text: string, status: 'loading' | 'empty') => {
+        const statusElement = document.createElement('div');
+        statusElement.className = `iciba-popup__status iciba-popup__status--${status}`;
+
+        if (status === 'loading') {
+            const spinnerElement = document.createElement('span');
+            spinnerElement.className = 'iciba-popup__spinner';
+            spinnerElement.setAttribute('aria-hidden', 'true');
+            statusElement.append(spinnerElement);
+        }
+
+        const textElement = document.createElement('span');
+        textElement.textContent = text;
+        statusElement.append(textElement);
+        currentPopup.replaceChildren(statusElement);
+    };
+
+    const renderPlain = (currentPopup: HTMLElement, text: string) => {
+        const resultElement = document.createElement('div');
+        resultElement.className = 'iciba-popup__plain';
+        resultElement.textContent = text;
+        currentPopup.replaceChildren(createHeader(), resultElement);
+    };
+
     popup.className = `iciba-popup iciba-popup--${getPageColorScheme()}`;
-    popup.textContent = 'Translating...';
+    popup.setAttribute('role', 'tooltip');
+    popup.setAttribute('aria-live', 'polite');
+    renderStatus(popup, 'Translating...', 'loading');
     if (popup.parentElement === null) {
         (document.body ?? document.documentElement).append(popup);
     }
@@ -249,8 +468,38 @@ const injectPopup = (): number | undefined => {
         if (state.anchor === undefined) {
             return;
         }
-        currentPopup.style.top = `${state.anchor.top - currentPopup.clientHeight - 10}px`;
-        currentPopup.style.left = `${state.anchor.left}px`;
+
+        const viewportPadding = 12;
+        const gap = 10;
+        const viewportLeft = window.scrollX + viewportPadding;
+        const viewportRight = window.scrollX + window.innerWidth - viewportPadding;
+        const viewportTop = window.scrollY + viewportPadding;
+        const viewportBottom = window.scrollY + window.innerHeight - viewportPadding;
+        const popupWidth = currentPopup.offsetWidth;
+        const popupHeight = currentPopup.offsetHeight;
+        const maxLeft = Math.max(viewportLeft, viewportRight - popupWidth);
+        const maxTop = Math.max(viewportTop, viewportBottom - popupHeight);
+        const preferredLeft = state.anchor.left + state.anchor.width / 2 - popupWidth / 2;
+        const fitsAbove = state.anchor.top - gap - popupHeight >= viewportTop;
+        const fitsBelow = state.anchor.bottom + gap + popupHeight <= viewportBottom;
+        const placement: 'above' | 'below' = !fitsAbove && fitsBelow ? 'below' : 'above';
+        const preferredTop =
+            placement === 'below'
+                ? state.anchor.bottom + gap
+                : state.anchor.top - popupHeight - gap;
+        const left = clamp(preferredLeft, viewportLeft, maxLeft);
+        const top = clamp(preferredTop, viewportTop, maxTop);
+        const caretLeft = clamp(
+            state.anchor.left + state.anchor.width / 2 - left,
+            18,
+            Math.max(18, popupWidth - 18),
+        );
+
+        currentPopup.classList.toggle('iciba-popup--above', placement === 'above');
+        currentPopup.classList.toggle('iciba-popup--below', placement === 'below');
+        currentPopup.style.setProperty('--iciba-popup-caret-left', `${caretLeft}px`);
+        currentPopup.style.top = `${top}px`;
+        currentPopup.style.left = `${left}px`;
     };
     updatePopupPosition(popup);
 
@@ -260,7 +509,8 @@ const injectPopup = (): number | undefined => {
     state.initialized = true;
 
     const renderWord = (currentPopup: HTMLElement, word: MWord) => {
-        const partsElement = document.createElement('div');
+        const bodyElement = document.createElement('div');
+        bodyElement.className = 'iciba-popup__body';
         const prounciationsElement = document.createElement('div');
         prounciationsElement.className = 'prounciations';
         if (word.enPronunciation !== undefined) {
@@ -275,7 +525,11 @@ const injectPopup = (): number | undefined => {
             prounciationElement.textContent = `美[${word.amPronunciation.str}]`;
             prounciationsElement.append(prounciationElement);
         }
-        partsElement.append(prounciationsElement);
+        if (prounciationsElement.childElementCount > 0) {
+            bodyElement.append(prounciationsElement);
+        }
+
+        const partsElement = document.createElement('div');
         partsElement.className = 'parts';
 
         for (const part of word.parts) {
@@ -286,6 +540,8 @@ const injectPopup = (): number | undefined => {
                 partPartElement.className = 'part__part';
                 partPartElement.textContent = part.part;
                 partElement.append(partPartElement);
+            } else {
+                partElement.classList.add('part--plain');
             }
 
             const partMeansElement = document.createElement('span');
@@ -295,7 +551,11 @@ const injectPopup = (): number | undefined => {
             partsElement.append(partElement);
         }
 
-        currentPopup.replaceChildren(partsElement);
+        if (partsElement.childElementCount > 0) {
+            bodyElement.append(partsElement);
+        }
+
+        currentPopup.replaceChildren(createHeader(), bodyElement);
     };
 
     const isWord = (value: unknown): value is MWord =>
@@ -329,9 +589,9 @@ const injectPopup = (): number | undefined => {
         if (isWord(popupMessage.result)) {
             renderWord(currentPopup, popupMessage.result);
         } else if (typeof popupMessage.result === 'string') {
-            currentPopup.textContent = popupMessage.result;
+            renderPlain(currentPopup, popupMessage.result);
         } else {
-            currentPopup.textContent = 'No result';
+            renderStatus(currentPopup, 'No result', 'empty');
         }
         updatePopupPosition(currentPopup);
     });
