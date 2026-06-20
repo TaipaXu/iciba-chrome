@@ -1,18 +1,30 @@
 <template>
     <v-toolbar density="compact" color="primary" class="toolbar">
         <v-toolbar-title>
-            <span class="title" @click="openPage('https://www.iciba.com')">
+            <span
+            class="title"
+            data-tooltip="打开金山词霸"
+            aria-label="打开金山词霸"
+            @click="openPage('https://www.iciba.com')">
                 iCIBA
             </span>
         </v-toolbar-title>
 
         <v-spacer />
 
-        <v-btn icon title="生词本 / 全部历史" @click="openHistory">
+        <v-btn
+        icon
+        data-tooltip="生词本 / 全部历史"
+        aria-label="生词本 / 全部历史"
+        @click="openHistory">
             <v-icon>$bookOpenVariant</v-icon>
         </v-btn>
 
-        <v-btn icon @click="openPage('https://github.com/TaipaXu/iciba-chrome')">
+        <v-btn
+        icon
+        data-tooltip="打开 GitHub"
+        aria-label="打开 GitHub"
+        @click="openPage('https://github.com/TaipaXu/iciba-chrome')">
             <v-icon>$github</v-icon>
         </v-btn>
     </v-toolbar>
@@ -68,6 +80,8 @@
             </template>
         </div>
     </main>
+
+    <tooltip-host></tooltip-host>
 </template>
 
 <script setup lang="ts">
@@ -77,6 +91,7 @@ import { translate as RTranslate } from '@/apis/dictionary';
 import play from '@/utils/audio';
 import MWord from '@/models/word';
 import type MSentence from '@/models/sentence';
+import TooltipHost from '@/widgets/tooltipHost.vue';
 import {
     addRecord as DAddRecord,
 } from '@/data';
