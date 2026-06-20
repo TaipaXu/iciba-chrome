@@ -26,7 +26,7 @@ type PopupResultMessage = {
 browser.runtime.onInstalled.addListener(() => {
     browser.contextMenus.create({
         id: 'icibaContextMenu',
-        title: 'translate',
+        title: 'Translate',
         contexts: ['selection'],
     });
 });
